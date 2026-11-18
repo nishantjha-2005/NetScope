@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>NetScope</title>
+
+    <style>
+        body {
+            width: 300px;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #111827;
+            color: white;
+        }
+
+        h2 {
+            color: #60a5fa;
+        }
+
+        button {
+            width : 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled{
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        
+
+        #status {
+            margin-top: 15px;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>NetScope</h2>
+
+    <p>Website Performance Monitor</p>
+
+    <button id="captureBtn">
+        Capture Performance
+    </button>
+
+    <div id="status">
+        Ready to Monitor.
+    </div>
+
+    <script src="popup.js"></script>
+
+</body>
+</html>

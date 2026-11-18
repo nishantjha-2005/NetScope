@@ -1,0 +1,209 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NetScope | Network Monitor</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <aside class="col-md-2 sidebar p-4">
+            <h3 class="brand">NetScope</h3>
+
+            <hr>
+
+            <nav>
+                <a href="#" class="nav-link active">Dashboard</a>
+                <a href="#" class="nav-link">Websites</a>
+                <a href="#" class="nav-link">Performance</a>
+                <a href="#" class="nav-link">Diagnostics</a>
+                <a href="#" class="nav-link">Reports</a>
+                <a href="#" class="nav-link">Settings</a>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="col-md-10 main-content p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p class="text-secondary">
+                        Monitor and analyze your website performance.
+                    </p>
+                </div>
+
+                <span class="badge bg-success p-2">
+                    NetScope Active
+                </span>
+            </div>
+
+            <!-- Statistics -->
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <p>Monitored Websites</p>
+                        <h2>{{ total_websites }}</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <p>Total Visits</p>
+                        <h2>{{ total_visits }}</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <p>Average Load Time</p>
+                        <h2>{{ average_load_time }} sec</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <p>Issues Detected</p>
+                        <h2>{{ issues_detected }}</h2>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Website table -->
+            <div class="content-card mb-4">
+                <h4>Website Monitoring</h4>
+
+                <div class="table-responsive">
+                    <table class="table mt-3">
+                        <thead>
+                            <tr>
+                                <th>Website</th>
+                                <th>Load Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        
+                        
+                        <tbody>
+                            {% for website in websites %}
+                            <tr>
+                                <td>{{ website.name }}</td>
+
+                                <td>
+                                    {% if website.status == "Normal" or website.status == "Slow" %}
+                                        {{ website.page_load|floatformat:2 }} ms
+                                    {% else %}
+                                        {{ website.status }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if website.status == "Normal" %}
+                                        <span class="badge bg-success">Normal</span>
+
+                                    {% elif website.status == "Slow" %}
+                                        <span class="badge bg-warning text-dark">Slow</span>
+
+                                    {% elif website.status == "Not visited" %}
+                                        <span class="badge bg-secondary">Not visited</span>
+
+                                    {% else %}
+                                        <span class="badge bg-info text-dark">Data unavailable</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    No websites monitored yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+
+                    </table>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="content-card">
+                <h4>Website Performance History</h4>
+
+                <canvas id="performanceChart"></canvas>
+            </div>
+
+            <!-- Recent Diagnostics -->
+            
+            <!-- Recent Website Visits -->
+            <div class="content-card mt-4">
+                <h4>Recent Website Visits</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mt-3">
+                        <thead>
+                            <tr>
+                                <th>Website</th>
+                                <th>Metrics Recorded</th>
+                                <th>Diagnostics</th>
+                                <th>Date</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for visit in recent_visits %}
+                            <tr>
+                                <td>{{ visit.website.name }}</td>
+                                <td>{{ visit.metrics.all|length }}</td>
+                                <td>{{ visit.diagnostics.all|length }}</td>
+                                <td>{{ visit.captured_at|date:"d M Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'performance_details' visit.id %}"
+                                    class="btn btn-sm btn-outline-primary">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    No website visits available yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+{{ chart_labels|json_script:"chart-labels" }}
+{{ chart_values|json_script:"chart-values" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+
+</body>
+</html>
